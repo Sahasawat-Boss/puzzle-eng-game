@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Lexicon — An English Escape</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- styles, in cascade order -->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/scenes.css">
+<link rel="stylesheet" href="css/puzzle.css">
+<link rel="stylesheet" href="css/shop.css">
+<link rel="stylesheet" href="css/screens.css">
+</head>
+<body>
+
+<!-- Shared SVG paint, referenced by every room scene. Defined once. -->
+<svg class="svgdefs" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g-panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b3138"/><stop offset="1" stop-color="#0a1215"/>
+    </linearGradient>
+    <linearGradient id="g-brass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8a6620"/><stop offset=".5" stop-color="#e9bd5e"/><stop offset="1" stop-color="#8a6620"/>
+    </linearGradient>
+    <linearGradient id="g-fade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffd580" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#ffd580" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#ffd580" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow-lamp" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffce7a" stop-opacity=".42"/>
+      <stop offset=".55" stop-color="#c9922e" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#c9922e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-cold" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#7fd8c6" stop-opacity=".30"/>
+      <stop offset="1" stop-color="#4fa392" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<!-- drifting dust, filled by fx.js -->
+<div class="dust" id="dust" aria-hidden="true"></div>
+
+<div class="wrap">
+  <div class="status" id="status" hidden>
+    <span class="mark">THE LEXICON</span>
+    <span class="spacer"></span>
+    <span class="meter coinmeter" id="coins" title="Coins">◉ <b>0</b></span>
+    <span class="meter" id="clock">TIME <b>20:00</b></span>
+    <span class="meter">HINTS <span class="hintdots" id="dots"></span></span>
+    <span class="meter wards" id="wards" hidden></span>
+    <button class="chip-btn" id="shopbtn">SHOP</button>
+    <button class="chip-btn ghost" id="mutebtn" aria-label="Toggle sound">♪</button>
+  </div>
+
+  <main id="app"></main>
+</div>
+
+<!-- the brass tumbler lock -->
+<div class="lock" id="lock" hidden>
+  <div class="lock-in">
+    <span class="lock-label">DOOR LOCK — 6 FRAGMENTS</span>
+    <div class="drums" id="drums"></div>
+  </div>
+</div>
+
+<!-- the pedlar's tray -->
+<div class="modal" id="shop" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shoptitle">
+    <header class="sheet-head">
+      <div>
+        <p class="eyebrow" style="margin:0">THE PEDLAR'S TRAY</p>
+        <h2 id="shoptitle">Shop</h2>
+      </div>
+      <span class="purse" id="purse">◉ 0</span>
+      <button class="chip-btn ghost" id="shopclose">CLOSE</button>
+    </header>
+    <p class="sheet-note">The clock is held while the tray is open. Buy what you need — items are used from the
+      <em>satchel</em> inside a room.</p>
+    <div class="shopgrid" id="shopgrid"></div>
+  </div>
+</div>
+
+<!-- flying coins / sparks -->
+<div class="fxlayer" id="fxlayer" aria-hidden="true"></div>
+
+<!-- lib -->
+<script src="js/lib/util.js"></script>
+<script src="js/lib/audio.js"></script>
+<script src="js/lib/fx.js"></script>
+<!-- data -->
+<script src="js/data/scenes.js"></script>
+<script src="js/data/rooms.js"></script>
+<script src="js/data/items.js"></script>
+<!-- core -->
+<script src="js/core/state.js"></script>
+<script src="js/core/chrome.js"></script>
+<!-- puzzles -->
+<script src="js/puzzles/scramble.js"></script>
+<script src="js/puzzles/choice.js"></script>
+<script src="js/puzzles/match.js"></script>
+<script src="js/puzzles/order.js"></script>
+<script src="js/puzzles/fill.js"></script>
+<!-- game -->
+<script src="js/shop.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+/* ============================================================
+   Title · reward · end screens
+   ============================================================ */
+.center{min-height:76vh; display:flex; flex-direction:column; justify-content:center; max-width:62ch}
+.title{
+  font-family:var(--display); font-weight:700; letter-spacing:.16em;
+  font-size:clamp(42px,10vw,90px); line-height:.98; margin:0 0 6px; color:var(--bone);
+}
+.title span{color:var(--brass)}
+.title.win{animation:titleGlow 3.4s ease-in-out infinite}
+@keyframes titleGlow{0%,100%{text-shadow:none}50%{text-shadow:0 0 26px rgba(201,146,46,.4)}}
+.sub{font-family:var(--mono); font-size:12px; letter-spacing:.34em; color:var(--brass); margin:0 0 30px}
+.caret{display:inline-block; width:.55em; background:var(--brass); animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.stats{display:flex; gap:30px; flex-wrap:wrap; margin:26px 0 30px}
+.stat b{display:block; font-family:var(--mono); font-size:26px; color:var(--brass); font-weight:500}
+.stat span{font-family:var(--mono); font-size:10px; letter-spacing:.24em; color:var(--bone-dim)}
+.stat.coin b{color:var(--brass-lit)}
+
+/* reward screen ledger */
+.ledger{
+  max-width:44ch; margin:22px 0 4px; padding:14px 16px;
+  border:1px solid var(--line); border-left:2px solid var(--brass); border-radius:var(--r);
+  background:rgba(201,146,46,.05);
+}
+.ledger div{
+  display:flex; gap:12px; font-family:var(--mono); font-size:13px; letter-spacing:.06em;
+  color:var(--bone-dim); padding:3px 0;
+}
+.ledger div b{margin-left:auto; color:var(--brass); font-weight:500}
+.ledger div.tot{border-top:1px solid var(--line); margin-top:6px; padding-top:8px; color:var(--bone)}
+.ledger div.tot b{color:var(--brass-lit); font-size:16px}
+.ledger div.zero b{color:var(--bone-dim)}
+
+.chipdrop{
+  display:inline-grid; place-items:center; width:64px; height:64px; margin:0 0 6px;
+  font-family:var(--mono); font-size:30px; color:var(--ink); font-weight:600;
+  background:radial-gradient(circle at 34% 28%, #ffe6a8, var(--brass) 58%, #6d4d13);
+  border-radius:50%; box-shadow:0 0 26px rgba(201,146,46,.35);
+  animation:chipIn .7s cubic-bezier(.2,1.4,.3,1) both;
+}
+@keyframes chipIn{from{opacity:0; transform:translateY(-26px) rotate(-140deg) scale(.5)}to{opacity:1; transform:none}}

@@ -1,0 +1,104 @@
+/* ============================================================
+   Frame: wrap · status bar · door rail · tumbler lock
+   ============================================================ */
+.wrap{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 20px 132px}
+
+/* ---------- status bar ---------- */
+.status{
+  position:sticky; top:0; z-index:20;
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding:14px 0 12px; margin-bottom:26px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(var(--ink) 78%, transparent);
+  backdrop-filter:blur(3px);
+}
+.mark{font-family:var(--display); font-weight:700; letter-spacing:.22em; font-size:13px; color:var(--brass)}
+.status .spacer{flex:1}
+.meter{font-family:var(--mono); font-size:13px; letter-spacing:.08em; color:var(--bone-dim); white-space:nowrap}
+.meter b{color:var(--bone); font-weight:500}
+.meter.urgent b{color:var(--rust); animation:pulseText 1s ease-in-out infinite}
+.meter.frozen b{color:#7fd8c6}
+.meter.paused b{opacity:.45}
+@keyframes pulseText{50%{opacity:.45}}
+
+.coinmeter{color:var(--brass-dim)}
+.coinmeter b{color:var(--brass)}
+.coinmeter.bump{animation:bump .45s cubic-bezier(.2,1.6,.3,1)}
+@keyframes bump{40%{transform:scale(1.22)}100%{transform:scale(1)}}
+
+.hintdots{display:inline-flex; gap:5px; vertical-align:-1px; margin-left:6px}
+.hintdots i{width:7px; height:7px; border:1px solid var(--brass-dim); transform:rotate(45deg); display:block}
+.hintdots i.on{background:var(--brass); border-color:var(--brass)}
+
+@media(max-width:620px){
+  .status{gap:10px}
+  .mark{font-size:11px; letter-spacing:.16em}
+  .meter{font-size:12px}
+}
+
+/* ---------- layout ---------- */
+.stage{display:grid; grid-template-columns:186px 1fr; gap:38px; align-items:start}
+@media(max-width:760px){.stage{grid-template-columns:1fr; gap:22px}}
+.panel{animation:enterPanel .5s ease both}
+@keyframes enterPanel{from{opacity:0; transform:translateY(14px)}to{opacity:1; transform:none}}
+
+/* ---------- door rail ---------- */
+.rail{position:sticky; top:78px}
+.rail-h{font-family:var(--mono); font-size:10px; letter-spacing:.28em; color:var(--bone-dim); margin:0 0 14px}
+.door{
+  display:flex; align-items:baseline; gap:10px; padding:9px 0;
+  border-top:1px solid var(--line); font-family:var(--mono); font-size:12px;
+  letter-spacing:.1em; color:var(--bone-dim); transition:color .25s;
+}
+.door .num{color:var(--brass-dim); font-size:11px; min-width:26px}
+.door.done{color:var(--verdigris)} .door.done .num{color:var(--verdigris)}
+.door.here{color:var(--bone)} .door.here .num{color:var(--brass)}
+.door.here::after{content:"◂"; margin-left:auto; color:var(--brass)}
+.door.gold .num{color:var(--brass)}
+@media(max-width:760px){
+  .rail{position:static}
+  .rail-h{display:none}
+  .rail-list{display:flex; gap:6px; overflow-x:auto; padding-bottom:4px}
+  .door{border-top:0; border-bottom:2px solid var(--line); padding:4px 2px; white-space:nowrap; flex:0 0 auto}
+  .door.here{border-bottom-color:var(--brass)} .door.done{border-bottom-color:var(--verdigris)}
+  .door .name{display:none} .door.here .name{display:inline}
+  .door.here::after{display:none}
+}
+
+h1.room{
+  font-family:var(--display); font-weight:500; font-size:clamp(28px,5vw,44px);
+  letter-spacing:.06em; line-height:1.1; margin:0 0 18px; color:var(--bone);
+}
+
+/* ---------- signature: the brass tumbler lock ---------- */
+.lock{
+  position:fixed; left:0; right:0; bottom:0; z-index:15;
+  border-top:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(11,23,27,.55), var(--ink) 45%);
+  backdrop-filter:blur(6px);
+}
+.lock-in{max-width:1080px; margin:0 auto; padding:12px 20px 14px;
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap}
+.lock-label{font-family:var(--mono); font-size:10px; letter-spacing:.28em; color:var(--bone-dim)}
+.drums{display:flex; gap:6px; margin-left:auto}
+.drum{
+  width:40px; height:52px; overflow:hidden; position:relative; border-radius:var(--r);
+  background:linear-gradient(180deg,#0c1418,#1b2f34 35%,#0c1418);
+  border:1px solid var(--brass-dim);
+  box-shadow:inset 0 6px 10px -6px #000, inset 0 -6px 10px -6px #000;
+}
+.drum::after{content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.45),transparent 22%,transparent 78%,rgba(0,0,0,.45))}
+.reel{position:absolute; left:0; right:0; top:0; transition:transform 1.05s cubic-bezier(.16,.9,.2,1)}
+.reel span{display:block; height:52px; line-height:52px; text-align:center;
+  font-family:var(--mono); font-weight:500; font-size:22px; color:var(--brass)}
+.drum .pos{position:absolute; bottom:1px; left:0; right:0; text-align:center; z-index:2;
+  font-family:var(--mono); font-size:8px; letter-spacing:.14em; color:var(--bone-dim)}
+.drum.set{border-color:var(--verdigris); box-shadow:0 0 0 1px rgba(79,163,146,.25), inset 0 6px 10px -6px #000}
+.drum.set .reel span{color:var(--verdigris)}
+@media(max-width:620px){
+  .lock-label{display:none}
+  .drums{margin:0 auto}
+  .drum{width:36px; height:46px}
+  .reel span{height:46px; line-height:46px; font-size:19px}
+}

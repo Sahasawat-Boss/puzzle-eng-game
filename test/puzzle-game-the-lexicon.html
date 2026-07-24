@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Lexicon — An English Escape</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THE LEXICON — tokens
+   ink        #0b171b  drowned archive at night
+   slate      #12262c  panel
+   brass      #c9922e  sodium lamp / hardware
+   verdigris  #4fa392  oxidised copper / correct
+   bone       #e7dfd1  paper
+   rust       #b8503c  wrong
+   ============================================================ */
+:root{
+  --ink:#0b171b; --slate:#12262c; --slate-2:#183239;
+  --brass:#c9922e; --brass-dim:#8a6620;
+  --verdigris:#4fa392; --bone:#e7dfd1; --bone-dim:#9aa6a3;
+  --rust:#b8503c;
+  --line:rgba(231,223,209,.12);
+  --display:"Cinzel",Georgia,serif;
+  --body:"Spectral",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r:2px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--ink); color:var(--bone);
+  font-family:var(--body); font-weight:300; font-size:17px; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* lamp + vignette atmosphere */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(201,146,46,.13), transparent 60%),
+    radial-gradient(100% 100% at 50% 50%, transparent 45%, rgba(0,0,0,.72) 100%);
+  animation:lamp 7s ease-in-out infinite;
+}
+@keyframes lamp{0%,100%{opacity:1}42%{opacity:.87}46%{opacity:1}72%{opacity:.92}}
+.wrap{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 20px 120px}
+
+/* ---------- status bar ---------- */
+.status{
+  position:sticky; top:0; z-index:20;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  padding:14px 0 12px; margin-bottom:26px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(var(--ink) 78%, transparent);
+  backdrop-filter:blur(3px);
+}
+.mark{font-family:var(--display); font-weight:700; letter-spacing:.22em; font-size:13px; color:var(--brass)}
+.status .spacer{flex:1}
+.meter{font-family:var(--mono); font-size:13px; letter-spacing:.08em; color:var(--bone-dim)}
+.meter b{color:var(--bone); font-weight:500}
+.meter.urgent b{color:var(--rust)}
+.hintdots{display:inline-flex; gap:5px; vertical-align:-1px; margin-left:6px}
+.hintdots i{width:7px; height:7px; border:1px solid var(--brass-dim); transform:rotate(45deg); display:block}
+.hintdots i.on{background:var(--brass); border-color:var(--brass)}
+
+/* ---------- layout ---------- */
+.stage{display:grid; grid-template-columns:186px 1fr; gap:38px; align-items:start}
+@media(max-width:760px){.stage{grid-template-columns:1fr; gap:22px}}
+
+/* ---------- door rail ---------- */
+.rail{position:sticky; top:78px}
+.rail-h{font-family:var(--mono); font-size:10px; letter-spacing:.28em; color:var(--bone-dim); margin:0 0 14px}
+.door{
+  display:flex; align-items:baseline; gap:10px; padding:9px 0;
+  border-top:1px solid var(--line); font-family:var(--mono); font-size:12px;
+  letter-spacing:.1em; color:var(--bone-dim); transition:color .25s;
+}
+.door .num{color:var(--brass-dim); font-size:11px; min-width:26px}
+.door.done{color:var(--verdigris)} .door.done .num{color:var(--verdigris)}
+.door.here{color:var(--bone)} .door.here .num{color:var(--brass)}
+.door.here::after{content:"◂"; margin-left:auto; color:var(--brass)}
+@media(max-width:760px){
+  .rail{position:static}
+  .rail-h{display:none}
+  .rail-list{display:flex; gap:6px; overflow-x:auto; padding-bottom:4px}
+  .door{border-top:0; border-bottom:2px solid var(--line); padding:4px 2px; white-space:nowrap; flex:0 0 auto}
+  .door.here{border-bottom-color:var(--brass)} .door.done{border-bottom-color:var(--verdigris)}
+  .door .name{display:none} .door.here .name{display:inline}
+  .door.here::after{display:none}
+}
+
+/* ---------- room panel ---------- */
+.eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.3em; color:var(--brass); margin:0 0 10px}
+h1.room{
+  font-family:var(--display); font-weight:500; font-size:clamp(30px,5.2vw,46px);
+  letter-spacing:.06em; line-height:1.1; margin:0 0 18px; color:var(--bone);
+}
+.prose{max-width:60ch; color:#cfc8bb}
+.prose em{color:var(--brass); font-style:italic}
+.rule{height:1px; background:var(--line); margin:30px 0; max-width:60ch}
+
+/* ---------- puzzle furniture ---------- */
+.tiles{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 22px}
+.tile{
+  width:46px; height:56px; display:grid; place-items:center;
+  font-family:var(--display); font-weight:700; font-size:22px; color:var(--bone);
+  background:linear-gradient(180deg,var(--slate-2),var(--slate));
+  border:1px solid var(--line); border-radius:var(--r);
+  box-shadow:inset 0 1px 0 rgba(231,223,209,.07);
+}
+.field{display:flex; flex-wrap:wrap; gap:10px; align-items:center; max-width:60ch}
+input[type=text]{
+  flex:1; min-width:180px; background:transparent; border:0; border-bottom:1px solid var(--brass-dim);
+  color:var(--bone); font-family:var(--mono); font-size:19px; letter-spacing:.22em;
+  padding:9px 2px; text-transform:uppercase; outline:none; transition:border-color .2s;
+}
+input[type=text]:focus{border-bottom-color:var(--brass)}
+input[type=text]::placeholder{color:#4e5c5f; letter-spacing:.14em}
+
+button{font:inherit; cursor:pointer}
+.btn{
+  font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink); background:var(--brass); border:1px solid var(--brass);
+  padding:11px 20px; border-radius:var(--r); transition:background .18s,color .18s;
+}
+.btn:hover{background:#e0a63a}
+.btn.ghost{background:transparent; color:var(--bone-dim); border-color:var(--line)}
+.btn.ghost:hover{color:var(--brass); border-color:var(--brass-dim)}
+.btn:focus-visible,.opt:focus-visible,.pair:focus-visible,input:focus-visible{outline:2px solid var(--verdigris); outline-offset:3px}
+
+/* choice */
+.qblock{margin:0 0 26px; max-width:60ch}
+.q{font-size:19px; margin:0 0 14px; color:var(--bone)}
+.q u{text-decoration:none; border-bottom:1px dashed var(--brass); padding:0 22px}
+.opts{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px}
+.opt{
+  text-align:left; background:var(--slate); border:1px solid var(--line); color:#cfc8bb;
+  padding:12px 14px; border-radius:var(--r); font-family:var(--body); font-size:16px;
+  transition:border-color .18s,color .18s,background .18s;
+}
+.opt:hover{border-color:var(--brass-dim); color:var(--bone)}
+.opt.right{border-color:var(--verdigris); color:var(--verdigris); background:rgba(79,163,146,.08)}
+.opt.wrong{border-color:var(--rust); color:var(--rust)}
+.opt[disabled]{cursor:default}
+
+/* match */
+.match{display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:60ch}
+@media(max-width:560px){.match{grid-template-columns:1fr}}
+.pair{
+  text-align:left; background:var(--slate); border:1px solid var(--line); color:#cfc8bb;
+  padding:12px 14px; border-radius:var(--r); font-family:var(--body); font-size:15.5px; line-height:1.4;
+  transition:border-color .18s,opacity .3s,color .18s;
+}
+.pair.idiom{font-family:var(--display); font-size:15px; letter-spacing:.03em; color:var(--bone)}
+.pair:hover{border-color:var(--brass-dim)}
+.pair.sel{border-color:var(--brass); color:var(--brass)}
+.pair.locked{opacity:.28; pointer-events:none; border-color:var(--verdigris); color:var(--verdigris)}
+.pair.miss{border-color:var(--rust); animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* feedback + hint */
+.say{font-family:var(--mono); font-size:13px; letter-spacing:.06em; min-height:22px; margin:16px 0 0}
+.say.good{color:var(--verdigris)} .say.bad{color:var(--rust)}
+.hintbox{
+  margin-top:26px; padding:14px 16px; border-left:2px solid var(--brass);
+  background:rgba(201,146,46,.06); max-width:60ch; font-style:italic; color:#d8cfbe;
+}
+
+/* ---------- signature: the brass tumbler lock ---------- */
+.lock{
+  position:fixed; left:0; right:0; bottom:0; z-index:15;
+  border-top:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(11,23,27,.55), var(--ink) 45%);
+  backdrop-filter:blur(6px);
+}
+.lock-in{max-width:1080px; margin:0 auto; padding:12px 20px 14px;
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap}
+.lock-label{font-family:var(--mono); font-size:10px; letter-spacing:.28em; color:var(--bone-dim)}
+.drums{display:flex; gap:8px; margin-left:auto}
+.drum{
+  width:44px; height:56px; overflow:hidden; position:relative; border-radius:var(--r);
+  background:linear-gradient(180deg,#0c1418,#1b2f34 35%,#0c1418);
+  border:1px solid var(--brass-dim);
+  box-shadow:inset 0 6px 10px -6px #000, inset 0 -6px 10px -6px #000;
+}
+.drum::after{content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.45),transparent 22%,transparent 78%,rgba(0,0,0,.45))}
+.reel{position:absolute; left:0; right:0; top:0; transition:transform .95s cubic-bezier(.16,.9,.2,1)}
+.reel span{display:block; height:56px; line-height:56px; text-align:center;
+  font-family:var(--mono); font-weight:500; font-size:24px; color:var(--brass)}
+.drum .pos{position:absolute; bottom:2px; left:0; right:0; text-align:center; z-index:2;
+  font-family:var(--mono); font-size:8px; letter-spacing:.14em; color:var(--bone-dim)}
+.drum.set{border-color:var(--verdigris)}
+.drum.set .reel span{color:var(--verdigris)}
+
+/* ---------- keypad (exit) ---------- */
+.keypad{display:grid; grid-template-columns:repeat(3,68px); gap:8px; margin:8px 0 20px}
+.key{
+  height:56px; background:var(--slate); border:1px solid var(--line); color:var(--bone);
+  font-family:var(--mono); font-size:20px; border-radius:var(--r); transition:border-color .15s,background .15s;
+}
+.key:hover{border-color:var(--brass); background:var(--slate-2)}
+.key.wide{grid-column:span 1; font-size:12px; letter-spacing:.1em}
+.readout{
+  font-family:var(--mono); font-size:34px; letter-spacing:.5em; color:var(--brass);
+  border-bottom:1px solid var(--brass-dim); display:inline-block; padding:6px 0 8px 14px; min-width:190px;
+}
+.readout.bad{color:var(--rust); border-color:var(--rust); animation:shake .3s}
+
+/* ---------- title / end screens ---------- */
+.center{min-height:78vh; display:flex; flex-direction:column; justify-content:center; max-width:60ch}
+.title{
+  font-family:var(--display); font-weight:700; letter-spacing:.16em;
+  font-size:clamp(42px,10vw,90px); line-height:.98; margin:0 0 6px; color:var(--bone);
+}
+.title span{color:var(--brass)}
+.sub{font-family:var(--mono); font-size:12px; letter-spacing:.34em; color:var(--brass); margin:0 0 30px}
+.caret{display:inline-block; width:.55em; background:var(--brass); animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.stats{display:flex; gap:34px; flex-wrap:wrap; margin:26px 0 30px}
+.stat b{display:block; font-family:var(--mono); font-size:28px; color:var(--brass); font-weight:500}
+.stat span{font-family:var(--mono); font-size:10px; letter-spacing:.24em; color:var(--bone-dim)}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none !important; transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="status" id="status" hidden>
+    <span class="mark">THE LEXICON</span>
+    <span class="spacer"></span>
+    <span class="meter" id="clock">TIME <b>12:00</b></span>
+    <span class="meter">HINTS <span class="hintdots" id="dots"></span></span>
+  </div>
+  <main id="app"></main>
+</div>
+
+<div class="lock" id="lock" hidden>
+  <div class="lock-in">
+    <span class="lock-label">DOOR LOCK — 4 FRAGMENTS</span>
+    <div class="drums" id="drums"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   Content — every puzzle is an English task.
+   Each room yields one digit AND the slot it belongs in.
+   ============================================================ */
+const ROOMS = [
+  {
+    numeral:"I", name:"The Foyer", type:"scramble",
+    intro:"The front door sealed behind you. On the console table lies a brass plate with eight letters knocked loose from their slots, and a card in a curator's hand: <em>“A long passage inside a building.”</em>",
+    task:"Put the letters back in order.",
+    letters:"RODIRCOR", answer:"CORRIDOR",
+    hint:"Eight letters. It starts with C and holds three R's.",
+    digit:"7", slot:3
+  },
+  {
+    numeral:"II", name:"The Study", type:"choice",
+    intro:"Two ledgers are chained to the desk, each with a sentence someone has already started to correct. The chain will not release until both read properly.",
+    task:"Choose the correct form.",
+    questions:[
+      { q:"If I <u></u> the key earlier, I would have opened this door hours ago.",
+        opts:["had found","found","have found","would find"], a:0,
+        why:"Third conditional: <em>if</em> + past perfect, then <em>would have</em> + past participle." },
+      { q:"The archivist, along with her two assistants, <u></u> this wing every night.",
+        opts:["lock","locks","are locking","have locked"], a:1,
+        why:"<em>along with…</em> is an interruption. The subject is still singular: <em>archivist locks</em>." }
+    ],
+    hint:"Question one is a third conditional. Question two is subject–verb agreement — ignore everything between the commas.",
+    digit:"3", slot:1
+  },
+  {
+    numeral:"III", name:"The Gallery", type:"match",
+    intro:"Four portraits, four small plaques — and someone has swapped every plaque with the wrong frame. The gallery door watches, unimpressed.",
+    task:"Pair each expression with what it means. Pick one from each column.",
+    pairs:[
+      ["Bite the bullet","Face something painful because you must"],
+      ["Let the cat out of the bag","Reveal a secret by accident"],
+      ["Under the weather","Feeling slightly unwell"],
+      ["Burn the midnight oil","Work late into the night"]
+    ],
+    hint:"Start with the two about the body: one is courage, one is illness.",
+    digit:"9", slot:4
+  },
+  {
+    numeral:"IV", name:"The Cellar", type:"scramble",
+    intro:"The last room is cold and the lamp is failing. Scratched into the wall, in a hand much less patient than the curator's:<br><br><em>“I have keys but open no locks. I have space but no room. You may enter, but you cannot go outside. What am I?”</em>",
+    task:"Type the answer.",
+    letters:null, answer:"KEYBOARD",
+    hint:"You are almost certainly touching one right now — or looking at one on glass.",
+    digit:"1", slot:2
+  }
+];
+const CODE = (()=>{ const s=[]; ROOMS.forEach(r=>s[r.slot-1]=r.digit); return s.join(""); })();
+
+/* ============================================================ State */
+const S = { room:0, time:12*60, hints:3, wrong:0, hintsUsed:0, fragments:{}, over:false, tick:null };
+const $ = s => document.querySelector(s);
+const app = $("#app"), clock = $("#clock"), dots = $("#dots"), drumsEl = $("#drums");
+
+/* ============================================================ Chrome */
+function fmt(s){ return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"); }
+
+function paintChrome(){
+  clock.innerHTML = "TIME <b>"+fmt(Math.max(0,S.time))+"</b>";
+  clock.classList.toggle("urgent", S.time<=60);
+  dots.innerHTML = [0,1,2].map(i=>'<i class="'+(i<S.hints?"on":"")+'"></i>').join("");
+}
+
+function buildDrums(){
+  drumsEl.innerHTML = [1,2,3,4].map(p=>
+    '<div class="drum" data-slot="'+p+'"><div class="reel">'+
+    '<span>◆</span>'+[0,1,2,3,4,5,6,7,8,9].map(n=>"<span>"+n+"</span>").join("")+
+    '</div><b class="pos">'+p+'</b></div>').join("");
+}
+function spinDrum(slot,digit){
+  const d = drumsEl.querySelector('.drum[data-slot="'+slot+'"]');
+  d.classList.add("set");
+  d.querySelector(".reel").style.transform = "translateY(-"+((+digit+1)*56)+"px)";
+}
+
+function startClock(){
+  S.tick = setInterval(()=>{
+    if(S.over) return;
+    S.time--; paintChrome();
+    if(S.time<=0){ S.time=0; clearInterval(S.tick); lose(); }
+  },1000);
+}
+function penalty(sec){ S.time = Math.max(0, S.time-sec); paintChrome(); }
+
+/* ============================================================ Screens */
+function intro(){
+  $("#status").hidden = true; $("#lock").hidden = true;
+  app.innerHTML = `
+    <section class="center">
+      <p class="sub" id="typed">&nbsp;<span class="caret">&nbsp;</span></p>
+      <h1 class="title">THE<br>LEXI<span>CON</span></h1>
+      <div class="prose">
+        <p>You came to the archive for one book. The door closed on its own, and every lock in the building
+        is spelled rather than cut — four doors, four fragments of a code, one lever at the end.</p>
+        <p>You have <b>twelve minutes</b> and <b>three hints</b>. A hint costs 45 seconds.
+        A wrong answer costs 15.</p>
+      </div>
+      <div style="margin-top:30px"><button class="btn" id="go">Enter the archive</button></div>
+    </section>`;
+  typeOut($("#typed"), "AN ENGLISH ESCAPE  ·  FOUR DOORS  ·  TWELVE MINUTES");
+  $("#go").onclick = begin;
+}
+function typeOut(el,text){
+  let i=0;
+  const id = setInterval(()=>{
+    el.innerHTML = text.slice(0,++i)+'<span class="caret">&nbsp;</span>';
+    if(i>=text.length) clearInterval(id);
+  },34);
+}
+
+function begin(){
+  $("#status").hidden = false; $("#lock").hidden = false;
+  buildDrums(); paintChrome(); startClock(); render();
+}
+
+function rail(){
+  const items = ROOMS.map((r,i)=>{
+    const cls = S.fragments[r.slot] ? "done" : (i===S.room ? "here" : "");
+    return '<div class="door '+cls+'"><span class="num">'+r.numeral+'</span><span class="name">'+r.name.replace("The ","").toUpperCase()+'</span></div>';
+  }).join("");
+  const exitCls = S.room>=ROOMS.length ? "here" : "";
+  return `<aside class="rail">
+    <p class="rail-h">DOORS</p>
+    <div class="rail-list">${items}
+      <div class="door ${exitCls}"><span class="num">✕</span><span class="name">EXIT</span></div>
+    </div></aside>`;
+}
+
+function shell(inner){
+  app.innerHTML = '<div class="stage">'+rail()+'<section class="panel">'+inner+'</section></div>';
+}
+
+/* ============================================================ Room render */
+function render(){
+  if(S.room >= ROOMS.length) return exitDoor();
+  const r = ROOMS[S.room];
+
+  let body = "";
+  if(r.type==="scramble"){
+    const tiles = r.letters
+      ? '<div class="tiles">'+r.letters.split("").map(c=>'<span class="tile">'+c+'</span>').join("")+'</div>'
+      : "";
+    body = tiles + `<div class="field">
+        <input type="text" id="ans" placeholder="type your answer" autocomplete="off" spellcheck="false">
+        <button class="btn" id="try">Try the lock</button>
+      </div>`;
+  }
+  if(r.type==="choice"){
+    body = r.questions.map((q,qi)=>`
+      <div class="qblock" data-q="${qi}">
+        <p class="q">${q.q}</p>
+        <div class="opts">${q.opts.map((o,oi)=>'<button class="opt" data-o="'+oi+'">'+o+'</button>').join("")}</div>
+      </div>`).join("");
+  }
+  if(r.type==="match"){
+    const left  = r.pairs.map((p,i)=>({t:p[0],i})); 
+    const right = r.pairs.map((p,i)=>({t:p[1],i}));
+    shuffle(right);
+    body = '<div class="match">'
+      + '<div id="colA">'+left.map(x=>'<button class="pair idiom" data-i="'+x.i+'" style="width:100%;margin-bottom:10px">'+x.t+'</button>').join("")+'</div>'
+      + '<div id="colB">'+right.map(x=>'<button class="pair" data-i="'+x.i+'" style="width:100%;margin-bottom:10px">'+x.t+'</button>').join("")+'</div>'
+      + '</div>';
+  }
+
+  shell(`
+    <p class="eyebrow">DOOR ${r.numeral}</p>
+    <h1 class="room">${r.name}</h1>
+    <div class="prose"><p>${r.intro}</p></div>
+    <div class="rule"></div>
+    <p class="prose" style="margin-top:0"><strong style="font-weight:600">${r.task}</strong></p>
+    ${body}
+    <p class="say" id="say"></p>
+    <div id="hintslot"></div>
+    <div style="margin-top:26px">
+      <button class="btn ghost" id="hint">Ask for a hint · −45s</button>
+    </div>`);
+
+  wire(r);
+}
+
+function wire(r){
+  const say = $("#say");
+  $("#hint").onclick = ()=>{
+    if(S.hints<=0){ say.className="say bad"; say.textContent="No hints left. You are on your own."; return; }
+    S.hints--; S.hintsUsed++; penalty(45); paintChrome();
+    $("#hintslot").innerHTML = '<div class="hintbox">'+r.hint+'</div>';
+    $("#hint").remove();
+  };
+
+  if(r.type==="scramble"){
+    const inp = $("#ans");
+    const check = ()=>{
+      const v = inp.value.trim().toUpperCase().replace(/\s+/g,"");
+      if(!v) return;
+      if(v===r.answer){ solved(r); }
+      else{
+        S.wrong++; penalty(15);
+        say.className="say bad"; say.textContent="The lock does not move. −15 seconds.";
+        inp.value=""; inp.focus();
+      }
+    };
+    $("#try").onclick = check;
+    inp.addEventListener("keydown", e=>{ if(e.key==="Enter") check(); });
+    inp.focus();
+  }
+
+  if(r.type==="choice"){
+    const done = new Set();
+    app.querySelectorAll(".opt").forEach(b=>{
+      b.onclick = ()=>{
+        const qi = +b.closest(".qblock").dataset.q, oi = +b.dataset.o, q = r.questions[qi];
+        if(done.has(qi)) return;
+        if(oi===q.a){
+          done.add(qi); b.classList.add("right");
+          b.closest(".qblock").querySelectorAll(".opt").forEach(x=>x.disabled=true);
+          say.className="say good"; say.innerHTML = q.why;
+          if(done.size===r.questions.length) setTimeout(()=>solved(r),700);
+        }else{
+          S.wrong++; penalty(15); b.classList.add("wrong"); b.disabled=true;
+          say.className="say bad"; say.textContent="Not that one. −15 seconds.";
+        }
+      };
+    });
+  }
+
+  if(r.type==="match"){
+    let sel = null, found = 0;
+    app.querySelectorAll(".pair").forEach(b=>{
+      b.onclick = ()=>{
+        const col = b.parentElement.id;
+        if(!sel){ sel=b; b.classList.add("sel"); return; }
+        if(sel===b){ sel=null; b.classList.remove("sel"); return; }
+        if(sel.parentElement.id===col){ sel.classList.remove("sel"); sel=b; b.classList.add("sel"); return; }
+        if(sel.dataset.i===b.dataset.i){
+          sel.classList.remove("sel"); sel.classList.add("locked"); b.classList.add("locked");
+          sel=null; found++;
+          say.className="say good"; say.textContent="Plaque seated. "+found+" of 4.";
+          if(found===4) setTimeout(()=>solved(r),600);
+        }else{
+          S.wrong++; penalty(15);
+          const a=sel; a.classList.add("miss"); b.classList.add("miss");
+          setTimeout(()=>{a.classList.remove("miss","sel"); b.classList.remove("miss");},320);
+          sel=null; say.className="say bad"; say.textContent="Wrong frame. −15 seconds.";
+        }
+      };
+    });
+  }
+}
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* ============================================================ Reward */
+function solved(r){
+  S.fragments[r.slot] = r.digit;
+  spinDrum(r.slot, r.digit);
+  shell(`
+    <p class="eyebrow">DOOR ${r.numeral} — OPEN</p>
+    <h1 class="room">${r.name}</h1>
+    <div class="prose">
+      <p>The lock gives. Inside the mechanism, a brass chip falls into your hand — stamped
+      <b style="font-family:var(--mono);color:var(--brass);font-size:22px">${r.digit}</b>,
+      with a smaller mark on the reverse: <b style="font-family:var(--mono);color:var(--brass)">slot ${r.slot}</b>.</p>
+      <p>It has taken its place on the lock below. The order will matter at the end.</p>
+    </div>
+    <div style="margin-top:30px">
+      <button class="btn" id="next">${S.room+1<ROOMS.length ? "Open the next door" : "Go to the exit"}</button>
+    </div>`);
+  $("#next").onclick = ()=>{ S.room++; render(); };
+}
+
+/* ============================================================ Exit */
+function exitDoor(){
+  shell(`
+    <p class="eyebrow">THE LAST DOOR</p>
+    <h1 class="room">Exit</h1>
+    <div class="prose"><p>Four drums, four slots. Read the marks on your chips and key the code
+    in <em>slot order</em> — not the order you found them.</p></div>
+    <div class="rule"></div>
+    <div class="readout" id="read">····</div>
+    <div class="keypad" id="pad">
+      ${[1,2,3,4,5,6,7,8,9].map(n=>'<button class="key" data-k="'+n+'">'+n+'</button>').join("")}
+      <button class="key wide" data-k="del">DEL</button>
+      <button class="key" data-k="0">0</button>
+      <button class="key wide" data-k="ok">PULL</button>
+    </div>
+    <p class="say" id="say"></p>`);
+
+  let buf = "";
+  const read = $("#read"), say = $("#say");
+  const paint = ()=> read.textContent = (buf + "····").slice(0,4);
+  $("#pad").onclick = e=>{
+    const k = e.target.dataset && e.target.dataset.k; if(!k) return;
+    if(k==="del"){ buf = buf.slice(0,-1); paint(); return; }
+    if(k==="ok"){
+      if(buf.length<4) return;
+      if(buf===CODE) return win();
+      S.wrong++; penalty(15);
+      read.classList.add("bad"); setTimeout(()=>read.classList.remove("bad"),340);
+      say.className="say bad"; say.textContent="The lever will not move. −15 seconds.";
+      buf=""; paint(); return;
+    }
+    if(buf.length<4){ buf+=k; paint(); }
+  };
+  paint();
+}
+
+/* ============================================================ End */
+function win(){
+  S.over = true; clearInterval(S.tick);
+  const used = 12*60 - S.time;
+  app.innerHTML = `
+    <section class="center">
+      <p class="sub">DOOR OPEN</p>
+      <h1 class="title">YOU'RE<br><span>OUT</span></h1>
+      <div class="prose"><p>Cold air, a street, and the book still in your coat. The archive locks itself
+      behind you, spelling something new for the next visitor.</p></div>
+      <div class="stats">
+        <div class="stat"><b>${fmt(used)}</b><span>TIME TAKEN</span></div>
+        <div class="stat"><b>${S.hintsUsed}</b><span>HINTS USED</span></div>
+        <div class="stat"><b>${S.wrong}</b><span>WRONG TRIES</span></div>
+      </div>
+      <div><button class="btn" onclick="location.reload()">Play again</button></div>
+    </section>`;
+  $("#lock").hidden = true;
+}
+
+function lose(){
+  S.over = true;
+  app.innerHTML = `
+    <section class="center">
+      <p class="sub" style="color:var(--rust)">TIME OUT</p>
+      <h1 class="title">STILL<br><span style="color:var(--rust)">INSIDE</span></h1>
+      <div class="prose"><p>The lamps cut out one by one. You reached
+      ${Object.keys(S.fragments).length} of 4 fragments.</p></div>
+      <div style="margin-top:26px"><button class="btn" onclick="location.reload()">Try again</button></div>
+    </section>`;
+  $("#lock").hidden = true;
+}
+
+intro();
+</script>
+</body>
+</html>

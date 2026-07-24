@@ -1,0 +1,141 @@
+/* ============================================================
+   Puzzle furniture — one block per puzzle type
+   ============================================================ */
+.task{max-width:60ch; margin:0 0 18px}
+.task strong{font-weight:600}
+
+/* ---------- scramble: answer slots + letter tiles ---------- */
+.slots{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 16px}
+.slot{
+  width:40px; height:52px; display:grid; place-items:center; padding:0;
+  font-family:var(--display); font-weight:700; font-size:21px; color:var(--brass);
+  background:rgba(24,50,57,.35); border:1px solid var(--line); border-bottom:2px solid var(--brass-dim);
+  border-radius:var(--r); transition:border-color .2s,background .2s,transform .12s;
+}
+.slot.filled{background:linear-gradient(180deg,var(--slate-2),var(--slate)); border-bottom-color:var(--brass)}
+.slot.filled:hover{border-color:var(--rust)}
+.slot.given{color:var(--verdigris); border-bottom-color:var(--verdigris); pointer-events:none}
+.slots.good .slot{border-color:var(--verdigris); color:var(--verdigris)}
+.slots.bad{animation:shake .34s}
+
+.tiles{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 20px}
+.tile{
+  width:44px; height:54px; display:grid; place-items:center; padding:0;
+  font-family:var(--display); font-weight:700; font-size:22px; color:var(--bone);
+  background:linear-gradient(180deg,var(--slate-2),var(--slate));
+  border:1px solid var(--line); border-radius:var(--r);
+  box-shadow:inset 0 1px 0 rgba(231,223,209,.07);
+  transition:transform .14s,border-color .18s,opacity .25s;
+  animation:tileIn .4s cubic-bezier(.2,1.3,.3,1) both;
+}
+.tile:hover{border-color:var(--brass); transform:translateY(-3px)}
+.tile.used{opacity:.16; pointer-events:none; transform:none}
+@keyframes tileIn{from{opacity:0; transform:translateY(-10px) rotate(-6deg)}to{opacity:1; transform:none}}
+
+/* free-typing variant */
+.field{display:flex; flex-wrap:wrap; gap:10px; align-items:center; max-width:60ch}
+input[type=text]{
+  flex:1; min-width:180px; background:transparent; border:0; border-bottom:1px solid var(--brass-dim);
+  color:var(--bone); font-family:var(--mono); font-size:19px; letter-spacing:.22em;
+  padding:9px 2px; text-transform:uppercase; outline:none; transition:border-color .2s;
+}
+input[type=text]:focus{border-bottom-color:var(--brass)}
+input[type=text]::placeholder{color:#4e5c5f; letter-spacing:.14em}
+
+/* ---------- choice ---------- */
+.qblock{margin:0 0 26px; max-width:60ch}
+.q{font-size:19px; margin:0 0 14px; color:var(--bone)}
+.q u{text-decoration:none; border-bottom:1px dashed var(--brass); padding:0 22px}
+.opts{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px}
+.opt{
+  text-align:left; background:var(--slate); border:1px solid var(--line); color:#cfc8bb;
+  padding:12px 14px; border-radius:var(--r); font-family:var(--body); font-size:16px;
+  transition:border-color .18s,color .18s,background .18s,opacity .3s;
+}
+.opt:hover{border-color:var(--brass-dim); color:var(--bone)}
+.opt.right{border-color:var(--verdigris); color:var(--verdigris); background:rgba(79,163,146,.08); animation:pop .35s}
+.opt.wrong{border-color:var(--rust); color:var(--rust); animation:shake .3s}
+.opt.cut{opacity:.2; text-decoration:line-through}
+.opt[disabled]{cursor:default}
+@keyframes pop{40%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+/* ---------- match ---------- */
+.match{display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:60ch}
+@media(max-width:560px){.match{grid-template-columns:1fr}}
+.pair{
+  display:block; width:100%; margin-bottom:10px; text-align:left;
+  background:var(--slate); border:1px solid var(--line); color:#cfc8bb;
+  padding:12px 14px; border-radius:var(--r); font-family:var(--body); font-size:15.5px; line-height:1.4;
+  transition:border-color .18s,opacity .35s,color .18s,transform .15s;
+}
+.pair.idiom{font-family:var(--display); font-size:15px; letter-spacing:.03em; color:var(--bone)}
+.pair:hover{border-color:var(--brass-dim); transform:translateX(2px)}
+.pair.sel{border-color:var(--brass); color:var(--brass); box-shadow:0 0 0 1px rgba(201,146,46,.3)}
+.pair.locked{opacity:.28; pointer-events:none; border-color:var(--verdigris); color:var(--verdigris)}
+.pair.miss{border-color:var(--rust); animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* ---------- order: sentence building ---------- */
+.line{
+  display:flex; flex-wrap:wrap; gap:7px; align-items:center; min-height:56px;
+  max-width:60ch; padding:10px 12px; margin:0 0 14px;
+  border:1px dashed var(--brass-dim); border-radius:var(--r); background:rgba(24,50,57,.28);
+  transition:border-color .2s;
+}
+.line.good{border-style:solid; border-color:var(--verdigris)}
+.line.bad{border-color:var(--rust); animation:shake .34s}
+.line .ghosttext{font-family:var(--mono); font-size:12px; letter-spacing:.18em; color:#4e5c5f}
+.bank{display:flex; flex-wrap:wrap; gap:7px; max-width:60ch; margin:0 0 18px}
+.chip{
+  font-family:var(--body); font-size:16px; color:var(--bone);
+  background:linear-gradient(180deg,var(--slate-2),var(--slate));
+  border:1px solid var(--line); border-radius:var(--r); padding:7px 12px;
+  transition:transform .14s,border-color .18s,opacity .2s;
+  animation:tileIn .35s cubic-bezier(.2,1.3,.3,1) both;
+}
+.chip:hover{border-color:var(--brass); transform:translateY(-2px)}
+.chip.placed{border-color:var(--brass-dim); color:var(--brass)}
+.chip.fixed{border-color:var(--verdigris); color:var(--verdigris); pointer-events:none}
+.progress{font-family:var(--mono); font-size:11px; letter-spacing:.2em; color:var(--bone-dim); margin:0 0 10px}
+
+/* ---------- fill: cloze with gaps ---------- */
+.cloze{font-size:19px; line-height:2.1; max-width:60ch; color:var(--bone); margin:0 0 20px}
+.gap{
+  font-family:var(--mono); font-size:15px; letter-spacing:.08em; color:var(--brass);
+  background:rgba(24,50,57,.5); border:0; border-bottom:2px solid var(--brass-dim);
+  padding:3px 14px; margin:0 3px; min-width:78px; border-radius:2px 2px 0 0;
+  transition:background .18s,border-color .18s,color .18s;
+}
+.gap:hover{background:var(--slate-2)}
+.gap.sel{border-bottom-color:var(--brass); background:rgba(201,146,46,.14); animation:blinkSoft 1.4s ease-in-out infinite}
+@keyframes blinkSoft{50%{background:rgba(201,146,46,.04)}}
+.gap.done{color:var(--verdigris); border-bottom-color:var(--verdigris); pointer-events:none}
+.gap.miss{color:var(--rust); border-bottom-color:var(--rust); animation:shake .3s}
+
+/* ---------- keypad (exit) ---------- */
+.keypad{display:grid; grid-template-columns:repeat(3,68px); gap:8px; margin:8px 0 20px}
+.key{
+  height:56px; background:var(--slate); border:1px solid var(--line); color:var(--bone);
+  font-family:var(--mono); font-size:20px; border-radius:var(--r);
+  transition:border-color .15s,background .15s,transform .1s;
+}
+.key:hover{border-color:var(--brass); background:var(--slate-2)}
+.key:active{transform:translateY(2px)}
+.key.wide{font-size:12px; letter-spacing:.1em}
+.readout{
+  font-family:var(--mono); font-size:clamp(22px,6vw,32px); letter-spacing:.38em; color:var(--brass);
+  border-bottom:1px solid var(--brass-dim); display:inline-block;
+  padding:6px 0 8px 12px; min-width:min(100%,300px);
+}
+.readout.bad{color:var(--rust); border-color:var(--rust); animation:shake .3s}
+.readout.good{color:var(--verdigris); border-color:var(--verdigris)}
+
+/* ---------- feedback + hint ---------- */
+.say{font-family:var(--mono); font-size:13px; letter-spacing:.06em; min-height:22px; margin:16px 0 0}
+.say.good{color:var(--verdigris)} .say.bad{color:var(--rust)} .say.gold{color:var(--brass)}
+.hintbox{
+  margin-top:26px; padding:14px 16px; border-left:2px solid var(--brass);
+  background:rgba(201,146,46,.06); max-width:60ch; font-style:italic; color:#d8cfbe;
+  animation:enterPanel .4s ease both;
+}
+.actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:26px}

@@ -1,0 +1,96 @@
+/* ============================================================
+   THE LEXICON — design tokens + base
+   ink        #0b171b  drowned archive at night
+   slate      #12262c  panel
+   brass      #c9922e  sodium lamp / hardware / money
+   verdigris  #4fa392  oxidised copper / correct
+   bone       #e7dfd1  paper
+   rust       #b8503c  wrong
+   ============================================================ */
+:root{
+  --ink:#0b171b; --slate:#12262c; --slate-2:#183239;
+  --brass:#c9922e; --brass-dim:#8a6620; --brass-lit:#e9bd5e;
+  --verdigris:#4fa392; --bone:#e7dfd1; --bone-dim:#9aa6a3;
+  --rust:#b8503c;
+  --line:rgba(231,223,209,.12);
+  --display:"Cinzel",Georgia,serif;
+  --body:"Spectral",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r:2px;
+}
+*{box-sizing:border-box}
+/* the game hides panels with the `hidden` attribute, and several of them carry a
+   display of their own (.modal is a grid, .status a flex) — which would otherwise
+   out-rank the UA rule and leave them on screen. */
+[hidden]{display:none !important}
+html,body{height:100%}
+body{
+  margin:0; background:var(--ink); color:var(--bone);
+  font-family:var(--body); font-weight:300; font-size:17px; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* lamp + vignette atmosphere */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(201,146,46,.13), transparent 60%),
+    radial-gradient(100% 100% at 50% 50%, transparent 45%, rgba(0,0,0,.72) 100%);
+  animation:lamp 7s ease-in-out infinite;
+}
+@keyframes lamp{0%,100%{opacity:1}42%{opacity:.87}46%{opacity:1}72%{opacity:.92}}
+
+/* hidden paint pot */
+.svgdefs{position:absolute; width:0; height:0; overflow:hidden}
+
+/* drifting dust */
+.dust{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden}
+.dust i{
+  position:absolute; display:block; width:2px; height:2px; border-radius:50%;
+  background:rgba(231,223,209,.5); opacity:0;
+  animation:motes linear infinite;
+}
+@keyframes motes{
+  0%{opacity:0; transform:translate3d(0,0,0)}
+  12%{opacity:.7}
+  88%{opacity:.5}
+  100%{opacity:0; transform:translate3d(28px,-140px,0)}
+}
+
+/* shared type helpers */
+.eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.3em; color:var(--brass); margin:0 0 10px}
+.prose{max-width:60ch; color:#cfc8bb}
+.prose em{color:var(--brass); font-style:italic}
+.rule{height:1px; background:var(--line); margin:30px 0; max-width:60ch}
+.coin{color:var(--brass); font-family:var(--mono)}
+
+/* buttons */
+button{font:inherit; cursor:pointer}
+.btn{
+  font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink); background:var(--brass); border:1px solid var(--brass);
+  padding:11px 20px; border-radius:var(--r); transition:background .18s,color .18s,transform .12s;
+}
+.btn:hover{background:var(--brass-lit)}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:transparent; color:var(--bone-dim); border-color:var(--line)}
+.btn.ghost:hover{color:var(--brass); border-color:var(--brass-dim)}
+.btn[disabled]{opacity:.35; cursor:not-allowed; transform:none}
+.chip-btn{
+  font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase;
+  background:var(--brass); color:var(--ink); border:1px solid var(--brass);
+  padding:5px 10px; border-radius:var(--r); transition:background .18s,color .18s;
+}
+.chip-btn:hover{background:var(--brass-lit)}
+.chip-btn.ghost{background:transparent; color:var(--bone-dim); border-color:var(--line)}
+.chip-btn.ghost:hover{color:var(--brass); border-color:var(--brass-dim)}
+.chip-btn.ghost.off{color:#4e5c5f; text-decoration:line-through}
+
+:where(.btn,.chip-btn,.opt,.pair,.key,.tile,.slot,.chip,.gap,.card-buy,input):focus-visible{
+  outline:2px solid var(--verdigris); outline-offset:3px;
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none !important; transition:none !important}
+}
