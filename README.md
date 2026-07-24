@@ -1,5 +1,7 @@
 # The Lexicon — An English Escape
 
+<img width="1548" height="812" alt="Screenshot 2026-07-25 011823" src="https://github.com/user-attachments/assets/521388d5-a35d-4a33-a5de-c2dffc0aae66" />
+
 An escape-room game where every lock is an English exercise. Nine rooms, brass code
 fragments, a clock, coins, and a pedlar who sells minutes back to you.
 
