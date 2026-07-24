@@ -60,25 +60,44 @@
 .card.bought{animation:cardFlash .5s ease}
 @keyframes cardFlash{0%{box-shadow:0 0 0 0 rgba(201,146,46,.55)}100%{box-shadow:0 0 0 14px rgba(201,146,46,0)}}
 
-/* ---------- satchel (in-room item tray) ---------- */
+/* ---------- right panel: satchel + the pedlar ---------- */
+.side{position:sticky; top:78px}
+.side .rail-h{margin-bottom:12px}
 .satchel{
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  max-width:60ch; margin:24px 0 0; padding:12px 14px;
+  display:flex; flex-direction:column; gap:7px;
+  padding:12px; margin:0 0 12px;
   border:1px solid var(--line); border-radius:var(--r); background:rgba(18,38,44,.42);
 }
-.satchel .lab{font-family:var(--mono); font-size:10px; letter-spacing:.24em; color:var(--bone-dim)}
-.satchel .empty{font-size:14px; font-style:italic; color:#6d7a7c}
-.item{
-  display:inline-flex; align-items:center; gap:7px;
-  background:var(--slate); border:1px solid var(--brass-dim); color:var(--bone);
-  padding:7px 11px; border-radius:var(--r); font-family:var(--mono); font-size:11px; letter-spacing:.1em;
-  transition:background .18s,transform .12s,opacity .2s;
+.satchel .empty{margin:2px 0; font-size:14px; font-style:italic; color:#6d7a7c; line-height:1.4}
+.btn.wide{width:100%; text-align:center; padding:10px 12px}
+.sidepurse{
+  margin:10px 0 0; font-family:var(--mono); font-size:10px; letter-spacing:.2em; color:var(--bone-dim);
+  display:flex; align-items:baseline; gap:8px;
 }
-.item .g{font-size:16px; color:var(--brass)}
+.sidepurse b{margin-left:auto; font-size:14px; letter-spacing:.06em; color:var(--brass); font-weight:500}
+
+.item{
+  display:flex; align-items:center; gap:9px; width:100%; text-align:left;
+  background:var(--slate); border:1px solid var(--brass-dim); color:var(--bone);
+  padding:8px 10px; border-radius:var(--r); font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+  transition:background .18s,transform .12s,opacity .2s,border-color .18s;
+}
+.item .g{font-size:16px; color:var(--brass); line-height:1}
+.item .t{flex:1}
 .item .n{color:var(--verdigris)}
-.item:hover{background:var(--slate-2); transform:translateY(-2px)}
+.item:hover{background:var(--slate-2); transform:translateX(2px); border-color:var(--brass)}
 .item[disabled]{opacity:.32; cursor:not-allowed; transform:none}
 .item.spend{animation:spend .5s ease}
+
+@media(max-width:1000px){
+  .side{position:static}
+  .satchel{flex-direction:row; flex-wrap:wrap; align-items:center}
+  .item{width:auto}
+  .item .t{flex:0 0 auto}
+  .btn.wide{width:auto}
+  .sidepurse{display:inline-flex; margin-left:14px}
+  .sidepurse b{margin-left:6px}
+}
 @keyframes spend{0%{box-shadow:0 0 0 0 rgba(79,163,146,.5)}100%{box-shadow:0 0 0 12px rgba(79,163,146,0)}}
 
 /* ---------- flying coins / sparks ---------- */

@@ -1,7 +1,7 @@
 /* ============================================================
    Frame: wrap · status bar · door rail · tumbler lock
    ============================================================ */
-.wrap{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 20px 132px}
+.wrap{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 20px 132px}
 
 /* ---------- status bar ---------- */
 .status{
@@ -17,7 +17,6 @@
 .meter{font-family:var(--mono); font-size:13px; letter-spacing:.08em; color:var(--bone-dim); white-space:nowrap}
 .meter b{color:var(--bone); font-weight:500}
 .meter.urgent b{color:var(--rust); animation:pulseText 1s ease-in-out infinite}
-.meter.frozen b{color:#7fd8c6}
 .meter.paused b{opacity:.45}
 @keyframes pulseText{50%{opacity:.45}}
 
@@ -36,9 +35,17 @@
   .meter{font-size:12px}
 }
 
-/* ---------- layout ---------- */
-.stage{display:grid; grid-template-columns:186px 1fr; gap:38px; align-items:start}
-@media(max-width:760px){.stage{grid-template-columns:1fr; gap:22px}}
+/* ---------- layout: doors · room · satchel ---------- */
+.stage{display:grid; grid-template-columns:152px minmax(0,1fr) 208px; gap:30px; align-items:start}
+/* no room for three columns: the satchel drops under the room, still beside the doors */
+@media(max-width:1000px){
+  .stage{grid-template-columns:152px minmax(0,1fr); gap:26px}
+  .stage .side{grid-column:2}
+}
+@media(max-width:760px){
+  .stage{grid-template-columns:1fr; gap:22px}
+  .stage .side{grid-column:1}
+}
 .panel{animation:enterPanel .5s ease both}
 @keyframes enterPanel{from{opacity:0; transform:translateY(14px)}to{opacity:1; transform:none}}
 
@@ -77,7 +84,7 @@ h1.room{
   background:linear-gradient(180deg, rgba(11,23,27,.55), var(--ink) 45%);
   backdrop-filter:blur(6px);
 }
-.lock-in{max-width:1080px; margin:0 auto; padding:12px 20px 14px;
+.lock-in{max-width:1180px; margin:0 auto; padding:12px 20px 14px;
   display:flex; align-items:center; gap:16px; flex-wrap:wrap}
 .lock-label{font-family:var(--mono); font-size:10px; letter-spacing:.28em; color:var(--bone-dim)}
 .drums{display:flex; gap:6px; margin-left:auto}

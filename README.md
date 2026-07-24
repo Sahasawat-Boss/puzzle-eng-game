@@ -1,7 +1,7 @@
 # The Lexicon — An English Escape
 
 An escape-room game where every lock is an English exercise. Eight rooms, six code
-fragments, a 20-minute clock, coins, and a pedlar who sells time.
+fragments, an 8-minute clock, coins, and a pedlar who sells minutes back to you.
 
 Open `index.html` — double-click is enough. No build step, no server, no dependencies
 (the scripts are plain `<script>` tags on purpose, so `file://` works).
@@ -27,7 +27,7 @@ js/
   data/items.js       shop stock (data only)
   data/scenes.js      one inline-SVG plate per room, keyed by room.scene
   core/state.js       LEX.S + every mutation of clock, purse and satchel
-  core/chrome.js      renders status bar, door rail, drums, satchel, page shell
+  core/chrome.js      renders status bar, door rail, drums, right-hand satchel panel, page shell
   puzzles/*.js        one module per puzzle type
   shop.js             buying, and what each item does (EFFECTS)
   game.js             flow: title -> rooms -> rewards -> exit -> endings

@@ -20,18 +20,11 @@
       s.innerHTML = html;
     },
 
-    /** Book a wrong answer, wax seal permitting. */
+    /** Book a wrong answer: tally it, take the seconds, say so. */
     wrong: function (msg) {
-      var how = st.countWrong();
-      if (how === "shield") {
-        LEX.audio.play("use");
-        api.say((msg || "Wrong.") + " The wax seal takes the hit — no time lost.", "gold");
-        LEX.fx.toast("Wax seal spent", "good");
-      } else {
-        LEX.audio.play("bad");
-        api.say((msg || "Wrong.") + " −" + R.wrongCost + " seconds.", "bad");
-      }
-      LEX.chrome.refreshSatchel();
+      st.countWrong();
+      LEX.audio.play("bad");
+      api.say((msg || "Wrong.") + " −" + R.wrongCost + " seconds.", "bad");
     },
 
     solved: function () { game.solved(cur.room, false); }
@@ -43,20 +36,37 @@
     intro: function () {
       LEX.chrome.showChrome(false);
       LEX.chrome.full(
-        '<section class="center">' +
+        '<section class="intro">' +
+        '<div class="introtext">' +
           '<p class="sub" id="typed">&nbsp;<span class="caret">&nbsp;</span></p>' +
           '<h1 class="title">THE<br>LEXI<span>CON</span></h1>' +
           '<div class="prose">' +
             "<p>You came to the archive for one book. The door closed on its own, and every lock in the building " +
             "is spelled rather than cut — <b>eight rooms</b>, " + LEX.SLOTS + " fragments of a code, one lever at the end.</p>" +
-            "<p>You have <b>twenty minutes</b> and <b>three hints</b>. A hint costs " + R.hintCost + " seconds, " +
-            "a wrong answer " + R.wrongCost + ". Rooms pay <span class=\"coin\">◉ coin</span> for clean English — " +
-            "two rooms hold nothing but money — and the pedlar in the corridor sells time, hints and small mercies.</p>" +
+            "<p>You have <b>eight minutes</b> and <b>three hints</b> — roughly a minute a room, so think fast. " +
+            "A hint costs " + R.hintCost + " seconds, a wrong answer " + R.wrongCost + ". Rooms pay " +
+            '<span class="coin">◉ coin</span> for clean English — two rooms hold nothing but money — and the pedlar ' +
+            "in the corridor sells minutes back to you.</p>" +
           "</div>" +
           '<div class="actions"><button class="btn" id="go">Enter the archive</button></div>' +
+        "</div>" +
+        /* two plates salvaged from an earlier visitor's run, the second pinned over the corner */
+        '<div class="platewrap">' +
+          '<figure class="plate">' +
+            '<img src="assets/images/sample-game-image1.png" width="1246" height="706" ' +
+              'alt="The Lexicon in play: the vault door with its dial turning, the doors listed down the left, ' +
+              'the satchel panel on the right.">' +
+            "<figcaption>SALVAGED PLATE · DOOR VII, THE VAULT</figcaption>" +
+          "</figure>" +
+          '<figure class="plate inset">' +
+            '<img src="assets/images/sample-game-image2.png" width="533" height="262" ' +
+              'alt="A chart table with a dashed route across it and a turning globe beside it.">' +
+            "<figcaption>PLATE V · THE MAP ROOM</figcaption>" +
+          "</figure>" +
+        "</div>" +
         "</section>"
       );
-      U.typeOut(U.$("#typed"), "AN ENGLISH ESCAPE · EIGHT ROOMS · TWENTY MINUTES");
+      U.typeOut(U.$("#typed"), "AN ENGLISH ESCAPE · EIGHT ROOMS · EIGHT MINUTES");
       U.$("#go").onclick = game.begin;
     },
 
@@ -94,12 +104,11 @@
         mod.render(r) +
         '<p class="say" id="say"></p>' +
         '<div id="hintslot"></div>' +
-        '<div class="actions"><button class="btn ghost" id="hint">Ask for a hint · −' + R.hintCost + "s</button></div>" +
-        LEX.chrome.satchel()
+        '<div class="actions"><button class="btn ghost" id="hint">Ask for a hint · −' + R.hintCost + "s</button></div>"
       );
 
       cur.ctrl = mod.mount(r, api) || {};
-      LEX.chrome.refreshSatchel();   // the loupe only knows now whether it has work
+      LEX.chrome.refreshSide();      // the loupe only knows now whether it has work
 
       U.$("#hint").onclick = function () {
         var how = st.useHint();
@@ -153,8 +162,7 @@
         '<div class="actions">' +
           '<button class="btn" id="next">' + (last ? "Go to the exit" : "Open the next door") + "</button>" +
           '<button class="btn ghost" data-openshop="1">Visit the pedlar</button>' +
-        "</div>" +
-        LEX.chrome.satchel()
+        "</div>"
       );
 
       LEX.audio.play(r.slot ? "unlock" : "coin");
@@ -185,8 +193,7 @@
           '<button class="key" data-k="0">0</button>' +
           '<button class="key wide" data-k="ok">PULL</button>' +
         "</div>" +
-        '<p class="say" id="say"></p>' +
-        LEX.chrome.satchel()
+        '<p class="say" id="say"></p>'
       );
 
       var buf = "";
@@ -216,7 +223,7 @@
           return true;
         }
       };
-      LEX.chrome.refreshSatchel();
+      LEX.chrome.refreshSide();
     },
 
     /* ================= items ================= */
@@ -287,7 +294,7 @@
           '<div class="prose"><p>The lamps cut out one by one. You reached ' +
             st.fragmentsFound() + " of " + LEX.SLOTS + " fragments" +
             (S.coins ? ' and are holding <span class="coin">◉ ' + S.coins + "</span> you can no longer spend" : "") +
-            ".</p><p>Next time: buy a Sandglass before the last room, not during it.</p></div>" +
+            ".</p><p>Next time: spend the coin on Pocket Watches while you still have rooms left to run.</p></div>" +
           '<div class="actions"><button class="btn" onclick="location.reload()">Try again</button></div>' +
         "</section>"
       );

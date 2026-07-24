@@ -24,18 +24,6 @@
       return true;
     },
 
-    seal: function () {
-      LEX.S.shield++;
-      LEX.fx.toast("A wax seal will absorb your next mistake", "good");
-      return true;
-    },
-
-    sand: function () {
-      LEX.state.holdClock(LEX.RULES.freezeSpan);
-      LEX.fx.toast("The clock is held for " + LEX.RULES.freezeSpan + " seconds", "good");
-      return true;
-    },
-
     loupe: function () { return LEX.game.assist(); },
 
     key: function () { return LEX.game.masterKey(); }
@@ -44,7 +32,6 @@
   var shop = {
 
     init: function () {
-      U.$("#shopbtn").onclick = function () { shop.open(); };
       U.$("#shopclose").onclick = function () { shop.close(); };
       U.$("#shop").addEventListener("click", function (e) {
         if (e.target.id === "shop") shop.close();          // click the shade
@@ -53,7 +40,7 @@
         if (e.key === "Escape" && !U.$("#shop").hidden) shop.close();
       });
 
-      /* delegated: satchel items + every "SHOP" chip in the page body */
+      /* delegated: satchel items + every shop button in the page body */
       document.addEventListener("click", function (e) {
         var t = e.target.closest ? e.target.closest("[data-item],[data-openshop]") : null;
         if (!t) return;
@@ -73,7 +60,7 @@
     close: function () {
       U.$("#shop").hidden = true;
       if (!LEX.S.over) LEX.state.resume();
-      LEX.chrome.refreshSatchel();
+      LEX.chrome.refreshSide();
     },
 
     paint: function () {
@@ -119,7 +106,7 @@
       LEX.state.take(id);
       LEX.audio.play("use");
       if (btn) U.flash(btn, "spend", 520);
-      LEX.chrome.refreshSatchel();
+      LEX.chrome.refreshSide();
       LEX.chrome.paint();
     }
   };
