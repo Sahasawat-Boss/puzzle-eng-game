@@ -281,7 +281,60 @@
         close("PLATE VII · THE VAULT");
     },
 
-    /* ---------------- VIII · The Cellar ---------------- */
+    /* ---------------- VIII · The Bindery ---------------- */
+    bindery: function () {
+      var threads = "", i;
+      for (i = 0; i < 5; i++) {
+        threads += '<path d="M' + (42 + i * 15) + ' 52V104" stroke="#4fa392" opacity=".75"/>';
+      }
+      return open("A bindery: a standing press, a sewing frame and half-made books") +
+        '<ellipse cx="150" cy="84" rx="118" ry="64" fill="url(#glow-lamp)" class="pulse"/>' +
+        /* bench */
+        '<path d="M0 120H320V150H0Z" fill="#0a1519"/>' +
+        '<path d="M0 120H320" stroke="#8a6620" opacity=".6"/>' +
+        /* sewing frame, left */
+        '<g>' +
+          '<path d="M26 118V52H110V118M20 52H116" fill="none" stroke="#8a6620" stroke-width="2"/>' +
+          "<g fill=\"none\">" + threads + "</g>" +
+          '<path d="M32 104H104V118H32Z" fill="#1b3138" stroke="' + BONE + '"/>' +
+          '<g stroke="rgba(231,223,209,.38)"><path d="M38 109h60M38 113h44"/></g>' +
+          /* the needle, still swinging on its thread */
+          '<g class="swing">' +
+            '<path d="M68 52 q7 16 3 30" fill="none" stroke="#e7dfd1" opacity=".45"/>' +
+            '<path d="M70 82 l4 11 -5 1Z" fill="#e9bd5e"/>' +
+          "</g>" +
+        "</g>" +
+        /* fanned signatures waiting on the bench */
+        '<g>' +
+          '<path d="M126 114 l30-6 2 8 -30 6Z" fill="#1e3a41" stroke="' + BONE + '"/>' +
+          '<path d="M130 107 l30-6 2 8 -30 6Z" fill="#23434b" stroke="' + BONE + '"/>' +
+          '<path d="M134 100 l30-6 2 8 -30 6Z" fill="#284c54" stroke="' + BONE + '"/>' +
+        "</g>" +
+        /* glue pot, brush rocking in it */
+        '<g>' +
+          '<path d="M172 102h26l-3 16h-20Z" fill="#16323a" stroke="#8a6620"/>' +
+          '<ellipse cx="185" cy="102" rx="13" ry="3.4" fill="#c9922e" opacity=".45"/>' +
+          '<g class="rock">' +
+            '<path d="M189 102 L197 78" stroke="#8a6620" stroke-width="2"/>' +
+            '<path d="M195 76 l6 2 -3 8 -5-2Z" fill="#d8cfbe" opacity=".65"/>' +
+          "</g>" +
+        "</g>" +
+        /* the standing press, right */
+        '<g>' +
+          '<path d="M236 40H306M238 44V118M304 44V118" fill="none" stroke="#8a6620" stroke-width="2"/>' +
+          '<rect x="246" y="88" width="50" height="11" fill="#16323a" stroke="#8a6620"/>' +
+          '<rect x="246" y="72" width="50" height="8" fill="#1e3439" stroke="#8a6620"/>' +
+          '<g stroke="rgba(231,223,209,.32)"><path d="M250 83h42M250 86h34"/></g>' +
+          '<path d="M271 44V72" stroke="url(#g-brass)" stroke-width="3"/>' +
+          '<g class="spin">' +
+            '<path d="M253 46H289" stroke="#c9922e" stroke-width="2.4"/>' +
+            '<circle cx="253" cy="46" r="2.8" fill="#e9bd5e"/><circle cx="289" cy="46" r="2.8" fill="#e9bd5e"/>' +
+          "</g>" +
+        "</g>" +
+        close("PLATE VIII · THE BINDERY");
+    },
+
+    /* ---------------- IX · The Cellar ---------------- */
     cellar: function () {
       var bricks = "", r, c, y, x, off;
       for (r = 0; r < 6; r++) {

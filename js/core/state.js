@@ -8,9 +8,9 @@
   var R = LEX.RULES;
 
   var S = {
-    room: 0,              // index into LEX.ROOMS (=== length -> the exit)
-    time: R.time,
-    hints: R.hints,
+    room: 0,              // index into LEX.RUN.rooms (=== length -> the exit)
+    time: 0,              // set from the chosen mode in beginRun()
+    hints: 0,
     coins: 0,
     earned: 0,            // lifetime coins, for the end screen
     spent: 0,
@@ -29,6 +29,37 @@
 
   var state = {
     S: S,
+
+    /* ---------------- the run ---------------- */
+    /**
+     * Lay out a run for the chosen mode: which rooms, how many tumblers,
+     * which slot each fragment belongs in, and what the lever wants.
+     * Slots are dealt fresh every time, so the code is never simply the
+     * order you found the chips in.
+     */
+    beginRun: function (modeId) {
+      var mode = LEX.mode(modeId);
+      var rooms = mode.rooms.map(function (i) { return LEX.ROOMS[i]; });
+
+      LEX.ROOMS.forEach(function (r) { r.slot = 0; });
+      var frags = rooms.filter(function (r) { return !!r.digit; });
+      var deal = LEX.util.shuffle(frags.map(function (_, i) { return i + 1; }));
+      frags.forEach(function (r, i) { r.slot = deal[i]; });
+
+      var code = [];
+      frags.forEach(function (r) { code[r.slot - 1] = r.digit; });
+
+      LEX.RUN = {
+        mode: mode,
+        rooms: rooms,
+        slots: frags.length,
+        code: code.join("")
+      };
+
+      S.time = mode.time;
+      S.hints = mode.hints;
+      return LEX.RUN;
+    },
 
     /* ---------------- clock ---------------- */
     startClock: function () {

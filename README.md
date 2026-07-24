@@ -1,7 +1,19 @@
 # The Lexicon — An English Escape
 
-An escape-room game where every lock is an English exercise. Eight rooms, six code
-fragments, an 8-minute clock, coins, and a pedlar who sells minutes back to you.
+An escape-room game where every lock is an English exercise. Nine rooms, brass code
+fragments, a clock, coins, and a pedlar who sells minutes back to you.
+
+Two ways in, chosen on the title screen:
+
+| | rooms | clock | hints | fragments |
+|---|---|---|---|---|
+| **Easy** | 4 (I–IV) | 6:00 | 4 | 3 |
+| **Hard** | all 9 | 9:00 | 3 | 7 |
+
+Everything else about a run — how many tumblers appear on the lock, which slot each
+chip belongs in, what the exit lever wants — is derived from the chosen mode in
+`LEX.state.beginRun()`. Slots are dealt fresh each run, so the code is never simply
+the order you found the chips in.
 
 Open `index.html` — double-click is enough. No build step, no server, no dependencies
 (the scripts are plain `<script>` tags on purpose, so `file://` works).
@@ -23,7 +35,7 @@ js/
   lib/util.js         $ / $$, fmt, shuffle, loose English comparison, typewriter
   lib/audio.js        WebAudio cues (no audio files); mutable from the status bar
   lib/fx.js           dust, coin bursts, sparks, toasts
-  data/rooms.js       the eight rooms + LEX.CODE + LEX.RULES (time, costs, bonuses)
+  data/rooms.js       the nine rooms + LEX.MODES + LEX.RULES (costs, bonuses)
   data/items.js       shop stock (data only)
   data/scenes.js      one inline-SVG plate per room, keyed by room.scene
   core/state.js       LEX.S + every mutation of clock, purse and satchel
@@ -40,9 +52,10 @@ Append to `LEX.ROOMS` in `js/data/rooms.js`:
 
 - `type` must match a module in `js/puzzles/` (`scramble`, `choice`, `match`, `order`, `fill`).
 - `scene` must match a key in `js/data/scenes.js` (or omit it for no plate).
-- Give it `digit` + `slot` to make it drop a code fragment — `LEX.CODE`, the drum count and
-  the exit keypad all derive from the slots, so nothing else needs touching.
-- Or set `treasure: true` and no slot: the room pays coin only.
+- Give it a `digit` to make it drop a code fragment — the slot it lands in, the drum count
+  and the exit keypad all derive from that, so nothing else needs touching.
+- Or set `treasure: true` and no `digit`: the room pays coin only.
+- Then add its index to the `rooms` array of whichever mode should include it.
 
 ## Adding a puzzle type
 

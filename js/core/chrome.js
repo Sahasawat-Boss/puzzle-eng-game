@@ -34,7 +34,8 @@
       el.coins.innerHTML = "◉ <b>" + S.coins + "</b>";
 
       var dots = "";
-      for (var i = 0; i < Math.max(LEX.RULES.hints, S.hints); i++) {
+      var slots = LEX.RUN ? LEX.RUN.mode.hints : 0;   // no run yet on the title screen
+      for (var i = 0; i < Math.max(slots, S.hints); i++) {
         dots += '<i class="' + (i < S.hints ? "on" : "") + '"></i>';
       }
       el.dots.innerHTML = dots;
@@ -57,7 +58,7 @@
       var cells = "";
       for (var n = 0; n <= 9; n++) cells += "<span>" + n + "</span>";
       var html = "";
-      for (var p = 1; p <= LEX.SLOTS; p++) {
+      for (var p = 1; p <= LEX.RUN.slots; p++) {
         html += '<div class="drum" data-slot="' + p + '"><div class="reel">' +
                 "<span>◆</span>" + cells + '</div><b class="pos">' + p + "</b></div>";
       }
@@ -75,7 +76,7 @@
     /* ---------------- door rail ---------------- */
     rail: function () {
       var S = LEX.S;
-      var items = LEX.ROOMS.map(function (r, i) {
+      var items = LEX.RUN.rooms.map(function (r, i) {
         var cls = S.cleared[i] ? "done" : (i === S.room ? "here" : "");
         if (r.treasure) cls += " gold";
         var mark = r.treasure ? "◈" : r.numeral;
@@ -84,7 +85,7 @@
       }).join("");
 
       return '<aside class="rail"><p class="rail-h">DOORS</p><div class="rail-list">' + items +
-        '<div class="door ' + (S.room >= LEX.ROOMS.length ? "here" : "") + '">' +
+        '<div class="door ' + (S.room >= LEX.RUN.rooms.length ? "here" : "") + '">' +
         '<span class="num">✕</span><span class="name">EXIT</span></div>' +
         "</div></aside>";
     },

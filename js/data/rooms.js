@@ -1,7 +1,8 @@
 /* ============================================================
-   The eight doors. Every puzzle is an English task.
-   Rooms with a `slot` drop a code fragment; rooms marked
-   `treasure` pay coin instead — nothing but money in there.
+   The nine doors. Every puzzle is an English task.
+   Rooms with a `digit` drop a code fragment — which slot it goes
+   in is dealt fresh each run. Rooms marked `treasure` pay coin
+   instead: nothing but money in there.
    ============================================================ */
 (function (LEX) {
   "use strict";
@@ -16,7 +17,7 @@
       task: "Tap the letters back into order.",
       letters: "RODIRCOR", answer: "CORRIDOR",
       hint: "Eight letters. It starts with C and holds three R's.",
-      coins: 22, digit: "7", slot: 3
+      coins: 22, digit: "7"
     },
 
     /* --------------------------------------------------- II */
@@ -34,7 +35,7 @@
           why: "<em>along with…</em> is an interruption. The subject is still singular: <em>archivist locks</em>." }
       ],
       hint: "One is a third conditional. The other is subject–verb agreement — ignore everything between the commas.",
-      coins: 24, digit: "3", slot: 1
+      coins: 24, digit: "3"
     },
 
     /* -------------------------------------------------- III */
@@ -50,7 +51,7 @@
         ["Burn the midnight oil", "Work late into the night"]
       ],
       hint: "Start with the two about the body: one is courage, one is illness.",
-      coins: 26, digit: "9", slot: 4
+      coins: 26, digit: "9"
     },
 
     /* --------------------------------------------------- IV */
@@ -89,7 +90,7 @@
       ],
       bank: ["at", "by", "in", "into", "on", "through", "since", "for"],
       hint: "Two of the tray's words are traps: <em>for</em> wants a length of time, <em>into</em> wants entry without exit.",
-      coins: 28, digit: "4", slot: 6
+      coins: 28, digit: "4"
     },
 
     /* --------------------------------------------------- VI */
@@ -105,7 +106,7 @@
         ["Look up to", "Admire and respect somebody"]
       ],
       hint: "<em>Off</em> tends to end things. <em>Up to</em> points at somebody above you.",
-      coins: 28, digit: "8", slot: 5
+      coins: 28, digit: "8"
     },
 
     /* -------------------------------------------------- VII */
@@ -132,30 +133,71 @@
 
     /* ------------------------------------------------- VIII */
     {
-      numeral: "VIII", name: "The Cellar", short: "CELLAR", scene: "cellar", type: "scramble",
+      numeral: "VIII", name: "The Bindery", short: "BINDERY", scene: "bindery", type: "fill",
+      intro: "Half-made books lie open on the sewing frame and a press stands in the corner, its screw wound down " +
+             "on nothing at all. The workshop notice above the bench has had all its little words picked out of it.",
+      task: "Tap a gap, then tap the word that belongs in it.",
+      sentence: "This room keeps {0} unfinished manuscript, {1} thread, and {2} glue that has gone hard. " +
+                "Sew {3} spine first, then give it {4} hour to dry.",
+      gaps: [
+        { a: "an",   why: "<em>An</em> before a vowel <em>sound</em>: an unfinished manuscript." },
+        { a: "some", why: "Uncountable and unspecified: <em>some thread</em>. <em>A thread</em> would be one single strand." },
+        { a: "the",  why: "The clause pins it down — <em>the</em> glue <em>that has gone hard</em>, not glue in general." },
+        { a: "the",  why: "One particular book has one particular spine: <em>the</em> spine." },
+        { a: "an",   why: "<em>An hour</em> — the <em>h</em> is silent, so the word opens on a vowel sound." }
+      ],
+      bank: ["a", "an", "the", "some", "any", "every"],
+      hint: "Two of the five are decided by <em>sound</em>, not spelling. One is decided by the clause that follows it.",
+      coins: 30, digit: "5"
+    },
+
+    /* --------------------------------------------------- IX */
+    {
+      numeral: "IX", name: "The Cellar", short: "CELLAR", scene: "cellar", type: "scramble",
       intro: "The last room is cold and the lamp is failing. Scratched into the wall, in a hand much less patient " +
              "than the curator's:<br><br><em>“I have keys but open no locks. I have space but no room. " +
              "You may enter, but you cannot go outside. What am I?”</em>",
       task: "Type the answer.",
       letters: null, answer: "KEYBOARD",
       hint: "You are almost certainly touching one right now — or looking at one on glass.",
-      coins: 30, digit: "1", slot: 2
+      coins: 30, digit: "1"
     }
   ];
 
-  /** Fragment slots, in slot order — the code the exit lever wants. */
-  LEX.CODE = (function () {
-    var s = [];
-    LEX.ROOMS.forEach(function (r) { if (r.slot) s[r.slot - 1] = r.digit; });
-    return s.join("");
-  })();
+  /* ============================================================
+     Two ways through the building. `rooms` indexes LEX.ROOMS, and
+     everything else about a run — the number of tumblers, the code,
+     the drums at the foot of the screen — is derived from it in
+     LEX.state.beginRun().
+     ============================================================ */
+  LEX.MODES = [
+    {
+      id: "easy", label: "EASY MODE", tag: "THE SHORT WAY OUT",
+      rooms: [0, 1, 2, 3],
+      time: 6 * 60, hints: 4,
+      blurb: "The first four rooms — a scramble, two ledgers, the plaques, and the countinghouse. " +
+             "Room to think, and a fourth hint in your pocket."
+    },
+    {
+      id: "hard", label: "HARD MODE", tag: "EVERY DOOR IN THE BUILDING",
+      rooms: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      time: 9 * 60, hints: 3,
+      blurb: "All nine rooms, both treasure rooms, and a minute a room. Expect to buy time from the pedlar."
+    }
+  ];
 
-  LEX.SLOTS = LEX.CODE.length;
+  LEX.mode = function (id) {
+    for (var i = 0; i < LEX.MODES.length; i++) if (LEX.MODES[i].id === id) return LEX.MODES[i];
+    return LEX.MODES[0];
+  };
 
-  /** Rules of the house, in one place. */
+  /** How many rooms of a mode drop a code fragment (the rest are treasure). */
+  LEX.fragmentCount = function (mode) {
+    return mode.rooms.filter(function (i) { return !!LEX.ROOMS[i].digit; }).length;
+  };
+
+  /** Rules that hold whichever way you go. */
   LEX.RULES = {
-    time: 8 * 60,       // seconds on the clock — a minute a room, and the exit for free
-    hints: 3,           // free hints
     hintCost: 45,       // seconds per hint
     wrongCost: 15,      // seconds per wrong answer
     noHintBonus: 10,    // coins for clearing a room without a hint

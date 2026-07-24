@@ -42,13 +42,13 @@
           '<h1 class="title">THE<br>LEXI<span>CON</span></h1>' +
           '<div class="prose">' +
             "<p>You came to the archive for one book. The door closed on its own, and every lock in the building " +
-            "is spelled rather than cut — <b>eight rooms</b>, " + LEX.SLOTS + " fragments of a code, one lever at the end.</p>" +
-            "<p>You have <b>eight minutes</b> and <b>three hints</b> — roughly a minute a room, so think fast. " +
-            "A hint costs " + R.hintCost + " seconds, a wrong answer " + R.wrongCost + ". Rooms pay " +
-            '<span class="coin">◉ coin</span> for clean English — two rooms hold nothing but money — and the pedlar ' +
-            "in the corridor sells minutes back to you.</p>" +
+            "is spelled rather than cut — a code broken into brass chips, one lever at the end.</p>" +
+            "<p>A hint costs " + R.hintCost + " seconds, a wrong answer " + R.wrongCost + ". Rooms pay " +
+            '<span class="coin">◉ coin</span> for clean English, the treasure rooms pay nothing else, and the ' +
+            "pedlar in the corridor sells minutes back to you.</p>" +
           "</div>" +
-          '<div class="actions"><button class="btn" id="go">Enter the archive</button></div>' +
+          '<p class="pick">CHOOSE YOUR WAY IN</p>' +
+          '<div class="modes">' + LEX.MODES.map(game.modeCard).join("") + "</div>" +
         "</div>" +
         /* two plates salvaged from an earlier visitor's run, the second pinned over the corner */
         '<div class="platewrap">' +
@@ -66,25 +66,43 @@
         "</div>" +
         "</section>"
       );
-      U.typeOut(U.$("#typed"), "AN ENGLISH ESCAPE · EIGHT ROOMS · EIGHT MINUTES");
-      U.$("#go").onclick = game.begin;
+      U.typeOut(U.$("#typed"), "AN ENGLISH ESCAPE · NINE ROOMS · TWO WAYS THROUGH");
+      U.$$(".mode").forEach(function (b) {
+        b.onclick = function () { game.begin(b.dataset.mode); };
+      });
     },
 
-    begin: function () {
+    /** One brass plaque per mode, on the title screen. */
+    modeCard: function (mode) {
+      var frags = LEX.fragmentCount(mode);
+      var treasure = mode.rooms.filter(function (i) { return LEX.ROOMS[i].treasure; }).length;
+      return '<button class="mode mode-' + mode.id + '" data-mode="' + mode.id + '">' +
+        '<span class="mtag">' + mode.tag + "</span>" +
+        "<b>" + mode.label + "</b>" +
+        '<span class="mfig">' + mode.rooms.length + " rooms · " + U.fmt(mode.time) + " · " +
+          mode.hints + " hints</span>" +
+        "<p>" + mode.blurb + "</p>" +
+        '<span class="mfoot">' + frags + " fragments to find" +
+          (treasure ? " · " + treasure + " treasure room" + (treasure > 1 ? "s" : "") : "") + "</span>" +
+      "</button>";
+    },
+
+    begin: function (modeId) {
+      st.beginRun(modeId);
       LEX.chrome.showChrome(true);
       LEX.chrome.buildDrums();
       LEX.chrome.paint();
       st.startClock();
-      LEX.audio.play("click");
+      LEX.audio.play("unlock");
       game.render();
     },
 
     /* ================= a room ================= */
     render: function () {
       var S = LEX.S;
-      if (S.room >= LEX.ROOMS.length) return game.exitDoor();
+      if (S.room >= LEX.RUN.rooms.length) return game.exitDoor();
 
-      var r = LEX.ROOMS[S.room];
+      var r = LEX.RUN.rooms[S.room];
       var mod = LEX.puzzles[r.type];
       st.enterRoom();
       cur.room = r;
@@ -133,7 +151,7 @@
       }
 
       var pay = st.reward(r, viaKey);
-      var last = S.room + 1 >= LEX.ROOMS.length;
+      var last = S.room + 1 >= LEX.RUN.rooms.length;
 
       var prize = r.slot
         ? '<div class="chipdrop" id="prize">' + r.digit + "</div>" +
@@ -175,14 +193,14 @@
 
     /* ================= exit ================= */
     exitDoor: function () {
-      var dots = new Array(LEX.SLOTS + 1).join("·");
+      var dots = new Array(LEX.RUN.slots + 1).join("·");
       cur.room = null;
 
       LEX.chrome.shell(
         '<p class="eyebrow">THE LAST DOOR</p>' +
         '<h1 class="room">Exit</h1>' +
-        '<div class="prose"><p>' + LEX.SLOTS + " drums, " + LEX.SLOTS + " slots. Read the marks on your chips and key " +
-        "the code in <em>slot order</em> — not the order you found them.</p></div>" +
+        '<div class="prose"><p>' + LEX.RUN.slots + " drums, " + LEX.RUN.slots + " slots. Read the marks on your chips and key " +
+        "the code in <em>slot order</em> — which is not the order you found them in.</p></div>" +
         '<div class="rule"></div>' +
         '<div class="readout" id="read">' + dots + "</div>" +
         '<div class="keypad" id="pad">' +
@@ -198,28 +216,28 @@
 
       var buf = "";
       var read = U.$("#read");
-      var paint = function () { read.textContent = (buf + dots).slice(0, LEX.SLOTS); };
+      var paint = function () { read.textContent = (buf + dots).slice(0, LEX.RUN.slots); };
 
       U.$("#pad").onclick = function (e) {
         var k = e.target.dataset && e.target.dataset.k;
         if (!k) return;
         if (k === "del") { buf = buf.slice(0, -1); paint(); LEX.audio.play("click"); return; }
         if (k === "ok") {
-          if (buf.length < LEX.SLOTS) return;
-          if (buf === LEX.CODE) { read.classList.add("good"); return game.win(); }
+          if (buf.length < LEX.RUN.slots) return;
+          if (buf === LEX.RUN.code) { read.classList.add("good"); return game.win(); }
           U.flash(read, "bad", 360);
           api.wrong("The lever will not move.");
           buf = ""; paint();
           return;
         }
-        if (buf.length < LEX.SLOTS) { buf += k; paint(); LEX.audio.play("place"); }
+        if (buf.length < LEX.RUN.slots) { buf += k; paint(); LEX.audio.play("place"); }
       };
       paint();
 
       /* the loupe still has one job down here */
       cur.ctrl = {
         assist: function () {
-          api.say("The loupe reads the tumblers: <b>" + LEX.CODE + "</b>.", "gold");
+          api.say("The loupe reads the tumblers: <b>" + LEX.RUN.code + "</b>.", "gold");
           return true;
         }
       };
@@ -259,13 +277,14 @@
 
       LEX.chrome.full(
         '<section class="center">' +
-          '<p class="sub">DOOR OPEN</p>' +
+          '<p class="sub">DOOR OPEN · ' + LEX.RUN.mode.label + "</p>" +
           '<h1 class="title win">YOU\'RE<br><span>OUT</span></h1>' +
           '<div class="prose"><p>Cold air, a street, and the book still in your coat — with ' +
             '<span class="coin">◉ ' + S.coins + "</span> of the archive's coin in your pocket. " +
             "The lock spells something new for the next visitor.</p></div>" +
           '<div class="stats">' +
-            '<div class="stat"><b>' + U.fmt(R.time - S.time) + "</b><span>TIME TAKEN</span></div>" +
+            '<div class="stat"><b>' + U.fmt(LEX.RUN.mode.time - S.time) + "</b><span>TIME TAKEN</span></div>" +
+            '<div class="stat"><b>' + LEX.RUN.rooms.length + "</b><span>ROOMS CLEARED</span></div>" +
             '<div class="stat coin"><b>' + S.earned + "</b><span>COIN EARNED</span></div>" +
             '<div class="stat"><b>' + S.spent + "</b><span>COIN SPENT</span></div>" +
             '<div class="stat"><b>' + S.hintsUsed + "</b><span>HINTS USED</span></div>" +
@@ -289,12 +308,17 @@
 
       LEX.chrome.full(
         '<section class="center">' +
-          '<p class="sub" style="color:var(--rust)">TIME OUT</p>' +
+          '<p class="sub" style="color:var(--rust)">TIME OUT · ' + LEX.RUN.mode.label + "</p>" +
           '<h1 class="title">STILL<br><span style="color:var(--rust)">INSIDE</span></h1>' +
           '<div class="prose"><p>The lamps cut out one by one. You reached ' +
-            st.fragmentsFound() + " of " + LEX.SLOTS + " fragments" +
+            st.fragmentsFound() + " of " + LEX.RUN.slots + " fragments" +
             (S.coins ? ' and are holding <span class="coin">◉ ' + S.coins + "</span> you can no longer spend" : "") +
-            ".</p><p>Next time: spend the coin on Pocket Watches while you still have rooms left to run.</p></div>" +
+            ".</p><p>" +
+            (LEX.RUN.mode.id === "hard"
+              ? "Next time: spend the coin on Pocket Watches while you still have rooms left to run — " +
+                "or take the short way out."
+              : "Next time: spend the coin on Pocket Watches while you still have rooms left to run.") +
+            "</p></div>" +
           '<div class="actions"><button class="btn" onclick="location.reload()">Try again</button></div>' +
         "</section>"
       );
